@@ -1,0 +1,32 @@
+# OSX
+#
+.DS_Store
+**/.DS_Store
+
+# IDE
+.idea
+# .vscode
+
+# node.js
+#
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# others
+#
+allure-master/report
+.history/*
+output
+allure-report/
+*.tgz
+*.zip
+aws_devicefarm_result/*
+!aws_devicefarm_result/.gitkeep
+.npmbundle/*
+
+# packages
+#
+app/**/*.app
+app/**/*.idsig
+app/**/*.zip

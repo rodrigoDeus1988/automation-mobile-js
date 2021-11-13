@@ -1,0 +1,13 @@
+{
+  "androidAPKPath": "./app/Android/app.apk",
+  "appiumTestFolderPath": "./",
+  "androidDevicePoolARN": "arn:aws:devicefarm:us-west-2:830245021360:devicepool:4c0c0598-71c0-4088-afe1-6d64081d14bd/c81f75f1-0a96-493e-809e-e1a681ba3719",
+  "appiumTestZipName": "automation-mobile-js.zip",
+  "projectARN": "arn:aws:devicefarm:us-west-2:830245021360:project:4c0c0598-71c0-4088-afe1-6d64081d14bd",
+  "runNameAndroid": "RegressivoAndroid",
+  "ciFileName": "ci_output_regressivo_android.json",
+  "testSpecAndroidARN": "arn:aws:devicefarm:us-west-2:830245021360:upload:4c0c0598-71c0-4088-afe1-6d64081d14bd/a048779e-b961-4772-be7f-3d19e20fc10a",
+  "verbose": true,
+  "downloadArtifactsPath": "./aws_devicefarm_result/android",
+  "deletePackageFilesAfterUpload": true
+}

@@ -1,0 +1,12 @@
+{
+    "iOSIPAPath": "./app/iOs/app.ipa",
+    "runNameIOS": "RegressivoIos",
+    "ciFileName": "ci_output_regressivo_ios.json",
+    "iOSDevicePoolARN": "arn:aws:devicefarm:us-west-2:830245021360:devicepool:4c0c0598-71c0-4088-afe1-6d64081d14bd/661c6722-e81c-4625-8543-4b8053e269a3",
+    "testSpecIOSARN": "arn:aws:devicefarm:us-west-2:830245021360:upload:4c0c0598-71c0-4088-afe1-6d64081d14bd/eeafffe5-6980-4b1e-8c15-3071d6a6a490",
+    "appiumTestZipName": "automation-mobile-js.zip",
+    "projectARN": "arn:aws:devicefarm:us-west-2:830245021360:project:4c0c0598-71c0-4088-afe1-6d64081d14bd",
+    "verbose": true,
+    "downloadArtifactsPath": "./aws_devicefarm_result/ios",
+    "deletePackageFilesAfterUpload": true
+}

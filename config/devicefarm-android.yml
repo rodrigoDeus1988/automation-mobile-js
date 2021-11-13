@@ -1,0 +1,145 @@
+version: 0.1
+
+# Phases are collection of commands that get executed on Device Farm.
+phases:
+  # The install phase includes commands that install dependencies that your tests use.
+  # Default dependencies for testing frameworks supported on Device Farm are already installed.
+  install:
+    commands:
+      # By default the node version installed is 11.4.0
+      # you can switch to an alternate node version using below command.
+      # - nvm install 10.13.0
+
+      # Unpackage and install the node modules that you uploaded in the test phase.
+      - echo "Navigate to test package directory"
+      - cd $DEVICEFARM_TEST_PACKAGE_PATH
+      - npm install *.tgz
+      - npm install -g allure-commandline
+
+      # This test execution environment uses Appium version 1.9.1 by default, however we enable you to change it using the Appium version manager (avm). An
+      # example "avm" command below changes the version to 1.14.2.
+      # For your convenience, we have preinstalled the following versions: 1.9.1, 1.10.1, 1.11.1, 1.12.1, 1.13.0, 1.14.1, 1.14.2, 1.15.1 or 1.16.0.
+      # To use one of these Appium versions, change the version number in the "avm" command below to your desired version:
+      - export APPIUM_VERSION=1.18.1
+      - avm $APPIUM_VERSION
+      - ln -s /usr/local/avm/versions/$APPIUM_VERSION/node_modules/.bin/appium  /usr/local/avm/versions/$APPIUM_VERSION/node_modules/appium/bin/appium.js
+
+      # By default device farm uses android build-tools 21.1.1. The code below downloads the
+      # build-tools and platform API version compatible with the app.
+      - echo "Install Android Build tools"
+      - export BUILD_TOOLS_VERSION=29.0.2
+      - export TARGET_SDK_VERSION=29_r04
+
+      # define new location to android sdk home
+      - mkdir -p $HOME/android-sdk-linux/platforms
+      - mkdir -p $HOME/android-sdk-linux/build-tools
+
+      # create symbolic links to old android home
+      - ln -s $ANDROID_HOME/add-ons $HOME/android-sdk-linux/add-ons
+      - ln -s $ANDROID_HOME/platform-tools $HOME/android-sdk-linux/platform-tools
+      - ln -s $ANDROID_HOME/temp $HOME/android-sdk-linux/temp
+      - ln -s $ANDROID_HOME/tools $HOME/android-sdk-linux/tools
+      - ln -s $ANDROID_HOME/licenses $HOME/android-sdk-linux/licenses
+
+      # download new build tools version and platform API version
+      - cd $TMPDIR
+      - curl -O https://dl.google.com/android/repository/build-tools_r$BUILD_TOOLS_VERSION-linux.zip
+      - >-
+        if [ $? -eq 0 ];
+        then
+          echo "build-tools_r$BUILD_TOOLS_VERSION downloaded!";
+        else
+          echo "Download of the build-tools_r$BUILD_TOOLS_VERSION failure. Exiting";
+          exit 1;
+        fi;
+      - curl -O https://dl.google.com/android/repository/platform-$TARGET_SDK_VERSION.zip
+      - >-
+        if [ $? -eq 0 ];
+        then
+          echo "platform-$TARGET_SDK_VERSION downloaded!";
+        else
+          echo "Download of the platform-$TARGET_SDK_VERSION failure. Exiting";
+          exit 1;
+        fi;
+
+      # extract files to new android sdk home
+      - unzip -o -qq build-tools_r$BUILD_TOOLS_VERSION-linux.zip -d $HOME/android-sdk-linux/build-tools
+      - unzip -o -qq platform-$TARGET_SDK_VERSION.zip -d $HOME/android-sdk-linux/platforms
+
+      # clean
+      - rm -rf build-tools_r$BUILD_TOOLS_VERSION-linux.zip platform-$TARGET_SDK_VERSION.zip
+
+      # define var ANDROID_HOME new location
+      - export ANDROID_HOME=$HOME/android-sdk-linux
+
+  # The pre-test phase includes commands that setup your test environment.
+  pre_test:
+    commands:
+      # We recommend starting appium server process in the background using the command below.
+      # Appium server log will go to $DEVICEFARM_LOG_DIR directory.
+      # The environment variables below will be auto-populated during run time.
+      - echo "Start appium server"
+      - >-
+        appium --log-timestamp
+        --default-capabilities "{\"deviceName\": \"$DEVICEFARM_DEVICE_NAME\", \"platformName\":\"$DEVICEFARM_DEVICE_PLATFORM_NAME\",
+        \"app\":\"$DEVICEFARM_APP_PATH\", \"udid\":\"$DEVICEFARM_DEVICE_UDID\", \"platformVersion\":\"$DEVICEFARM_DEVICE_OS_VERSION\",
+        \"chromedriverExecutable\":\"$DEVICEFARM_CHROMEDRIVER_EXECUTABLE\"}"
+        >> $DEVICEFARM_LOG_DIR/appiumlog.txt 2>&1 &
+
+      - >-
+        start_appium_timeout=0;
+        while [ true ];
+        do
+            if [ $start_appium_timeout -gt 60 ];
+            then
+                echo "appium server never started in 60 seconds. Exiting";
+                exit 1;
+            fi;
+            grep -i "Appium REST http interface listener started on 0.0.0.0:4723" $DEVICEFARM_LOG_DIR/appiumlog.txt >> /dev/null 2>&1;
+            if [ $? -eq 0 ];
+            then
+                echo "Appium REST http interface listener started on 0.0.0.0:4723";
+                break;
+            else
+                echo "Waiting for appium server to start. Sleeping for 1 second";
+                sleep 1;
+                start_appium_timeout=$((start_appium_timeout+1));
+            fi;
+        done;
+
+  # The test phase includes commands that start your test suite execution.
+  test:
+    commands:
+      # Go into the root folder containing your source code and node_modules
+      - echo "Navigate to test source code"
+      # Change the directory to node_modules folder as it has your test code and the dependency node modules.
+      - cd $DEVICEFARM_TEST_PACKAGE_PATH/node_modules/*
+
+      - echo "Start Appium Node test"
+      - export SCREENSHOT_PATH=$DEVICEFARM_LOG_DIR
+      - export REPORT_PATH=$DEVICEFARM_LOG_DIR
+      - export APP_PATH=$DEVICEFARM_APP_PATH
+      - export PLATFORM_NAME=$DEVICEFARM_DEVICE_PLATFORM_NAME
+      - export DEVICE_NAME=$DEVICEFARM_DEVICE_NAME
+      - export PLATFORM_VERSION=$DEVICEFARM_DEVICE_OS_VERSION
+      - export FORCE_ESPRESSO_REBUILD=true
+      - mkdir $DEVICEFARM_LOG_DIR/report
+
+      # Enter the command below to start the tests . The comamnd should be similar to what you use to run the tests locally.
+      # For e.g. assuming you run your tests locally using command "node YOUR_TEST_FILENAME.js.", enter the same command below:
+      - >-
+        npm run android -- --grep "@Regressivo" --verbose
+
+  # The post test phase includes are commands that are run after your tests are executed.
+  post_test:
+    commands:
+      - cp $DEVICEFARM_LOG_DIR/*.png $DEVICEFARM_SCREENSHOT_PATH/
+      - allure generate $DEVICEFARM_LOG_DIR -o $DEVICEFARM_LOG_DIR/report
+      - curl -X POST -H 'Content-type: application/json' --data '{"text":"Execução dos testes automatizados (android) finalizada! Verifique o resultado da execução no AWS Device Farm"}' https://hooks.slack.com/services/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
+
+# The artifacts phase lets you specify the location where your tests logs, device logs will be stored.
+# And also let you specify the location of your test logs and artifacts which you want to be collected by Device Farm.
+# These logs and artifacts will be available through ListArtifacts API in Device Farm.
+artifacts:
+  # By default, Device Farm will collect your artifacts from following directories
+  - $DEVICEFARM_LOG_DIR

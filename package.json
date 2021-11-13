@@ -1,0 +1,101 @@
+{
+  "name": "midwaybank-automation",
+  "version": "1.0.1",
+  "description": "Banco Digital - Midway",
+  "main": "index.js",
+  "scripts": {
+    "start": "appium",
+    "build": "echo 'TODO: Construir um script que baixar os pacotes e coloca em app/Android e app/iOs'",
+    "android": "codeceptjs run -c codecept.conf.js --profile android",
+    "dry-run": "codeceptjs dry-run -c codecept.conf.js",
+    "ios": "codeceptjs run -c codecept.conf.js --profile ios",
+    "lint": "eslint *.js .",
+    "lint:fix": "eslint --fix *.js ."
+  },
+  "author": "Rodrigo Florindo de Deus",
+  "license": "ISC",
+  "dependencies": {
+    "allure": "^0.0.0",
+    "appium": "^1.20.2",
+    "aws-sdk": "^2.870.0",
+    "axios": "^0.19.1",
+    "brew": "0.0.8",
+    "chai": "^4.3.4",
+    "chai-string": "^1.5.0",
+    "codeceptjs": "^2.6.11",
+    "commander": "^2.20.0",
+    "common": "^0.2.5",
+    "cucumber": "^6.0.5",
+    "delay": "^4.4.1",
+    "faker-br": "^0.3.0",
+    "fs": "^0.0.1-security",
+    "js-yaml": "^3.14.0",
+    "jspdf": "^1.5.3",
+    "jszip": "^3.6.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
+    "node": "^14.16.0",
+    "npm-bundle": "3.0.3 ",
+    "python3": "0.0.1",
+    "selenium": "^2.20.0",
+    "shelljs": "^0.8.3"
+  },
+  "bundledDependencies": [
+    "allure",
+    "appium",
+    "aws-sdk",
+    "axios",
+    "brew",
+    "chai",
+    "chai-string",
+    "codeceptjs",
+    "commander",
+    "common",
+    "cucumber",
+    "delay",
+    "faker-br",
+    "fs",
+    "js-yaml",
+    "jspdf",
+    "jszip",
+    "lodash",
+    "node",
+    "npm-bundle",
+    "python3",
+    "selenium",
+    "shelljs"
+  ],
+  "devDependencies": {
+    "allure-commandline": "^2.13.8",
+    "appium-doctor": "^1.16.0",
+    "babel-eslint": "10.1.0",
+    "babel-loader": "8.1.0",
+    "babel-plugin-root-import": "6.5.0",
+    "eslint": "6.8.0",
+    "eslint-config-airbnb": "17.1.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-prettier": "6.9.0",
+    "eslint-import-resolver-babel-plugin-root-import": "1.1.1",
+    "eslint-plugin-import": "2.22.0",
+    "eslint-plugin-jsx-a11y": "6.3.1",
+    "eslint-plugin-prettier": "3.1.2",
+    "eslint-plugin-react": "7.20.5",
+    "eslint-plugin-react-hooks": "2.5.1",
+    "husky": "3.1.0",
+    "jasmine-allure-reporter": "^1.0.2",
+    "prettier": "1.19.1",
+    "webdriverio": "^6.12.1"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks_disabled": {
+      "pre-commit": "lint-staged",
+      "pre-push": "lint quality-verify"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+allure-master
+test-report
+node_modules
+.history
+aws_devicefarm_result
+app
+config
+output
+**/*.js

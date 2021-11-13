@@ -1,0 +1,41 @@
+{
+    "editor.renderControlCharacters": true,
+    "editor.renderWhitespace": "all",
+    "terminal.integrated.fontFamily": "monospace",
+    "window.zoomLevel": 0,
+    "git.ignoreLimitWarning": true,
+    "cucumberautocomplete.steps": [
+        "features/step_definitions/*.ts",
+        "features/step_definitions/**/*.ts",
+        "features/step_definitions/*.js",
+        "features/step_definitions/**/*.js",
+        "step_definitions/**/*.js",
+        "step_definitions/*.js"
+    ],
+    "cucumberautocomplete.syncfeatures": "features/**/*feature",
+    "cucumberautocomplete.strictGherkinCompletion": true,
+    "cucumberautocomplete.smartSnippets": true,
+    "cucumberautocomplete.stepsInvariants": true,
+    "cucumberautocomplete.formatConfOverride": {
+        "Funcionalidade": 0,
+        "Cenário": 1,
+        "Cenario": 1,
+        "Esquema": 1,
+        "Contexto": 1,
+        "Dado": 2,
+        "E": 2,
+        "Mas": 2,
+        "Quando": 2,
+        "Então": 2,
+        "Exemplos": 2,
+        "\\|": 3,
+        "\"\"\"": 3
+    },
+    "cucumberautocomplete.onTypeFormat": true,
+    "files.associations": {
+        "*.feature": "feature",
+        ".env.automation": "dotenv"
+    },
+    "files.autoSave": "afterDelay",
+    "javascript.updateImportsOnFileMove.enabled": "always",
+}

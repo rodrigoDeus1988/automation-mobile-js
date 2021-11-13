@@ -1,0 +1,58 @@
+resources:
+  pipelines:
+  - pipeline: "midway-app"
+    project: "tribe-digital-channel"
+    source: "midway-app"
+    trigger: true
+
+variables:
+  - group: automation-mobile-js
+
+trigger: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+  - stage: "upload_test"
+    displayName: "upload test"
+    jobs:
+      - job: "upload"
+        steps:
+
+        - checkout: self
+          fetchDepth: 1
+        
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            buildType: 'specific'
+            project: 'd0c88dd0-5e42-4efb-aa83-4eb32060a8ba'
+            definition: '1023'
+            buildVersionToDownload: 'latest'
+            allowPartiallySucceededBuilds: true
+            artifact: "ipa-mtest"
+            targetPath: '$(Pipeline.Workspace)/MTEST/ipa-mtest'
+
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            buildType: 'specific'
+            project: 'd0c88dd0-5e42-4efb-aa83-4eb32060a8ba'
+            definition: '1023'
+            buildVersionToDownload: 'latest'
+            allowPartiallySucceededBuilds: true
+            artifact: "apk-mtest"
+            targetPath: '$(Pipeline.Workspace)/MTEST/apk-mtest'
+
+        - bash: | 
+            mv $(PIPELINE.WORKSPACE)/MTEST/apk-mtest/app-mtest-release.apk ./app/Android/app.apk
+            mv $(PIPELINE.WORKSPACE)/MTEST/ipa-mtest/qa-mtest.ipa ./app/iOs/app.ipa
+          
+        - bash: npm install
+          displayName: "npm install"
+
+        - bash: CI=true node deviceFarm.js
+          displayName: "run script"
+        - task: PublishPipelineArtifact@1
+          inputs:
+            targetPath: ci_output
+            artifactName: ci_output

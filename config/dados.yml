@@ -1,0 +1,66 @@
+login:
+  cpf: 66045213386
+  senha: 976885
+  novaSenha: 377524
+
+contaMidway:
+  agencia: 0001
+  banco: 358
+  conta: 1008269
+  contaInvalida: 454545
+
+contaOutroBanco:
+  agencia: 3070
+  banco: 756
+  conta: 7234341
+  contaInvalida: 000000
+
+paymentAccount:
+  documentNumber: 30259531871
+  password: 608707
+  accountNumber: 2411466
+
+contaEmprestimoConsulta:
+  documentNumber: 84860677668
+  password: 186493
+  accountNumber: 2544563
+
+paymentAccountWithBalance:
+  documentNumber: 44383884067
+  password: 102030
+  balance: 356.65
+
+paymentAccountWithoutBalance:
+  documentNumber: 28527294311
+  password: 102030
+  balance: 0
+
+paymentAccountWithBlockedBalance:
+  documentNumber: 59102867494
+  password: 243203
+  balance: 380
+  blockedBalanceResult: 500
+
+paymentAccountWithCard:
+  documentNumber: 14428005857
+  password: 923351
+
+paymentAccountWithIncommingMoviment:
+  documentNumber: 95324402400
+  password: 496002
+  startDate: 26/11/2020
+  endDate: 26/12/2020
+
+paymentAccountWithOutboundMovement:
+  documentNumber: 97766133067
+  password: 102030
+  startDate: 30/11/2020
+  endDate: 30/12/2020
+
+remuneratedAccount:
+  documentNumber: 52506693017
+  password: 102030
+
+paymentsModule:
+  validBillet: 23792.85600 90029.991958 76022.265201 1 88380000055000 #23792.85600 90029.991958 77022.265209 3 88390000023000
+  invalidBillet: 23792.85600 90029.991958 77022.265209 3 88300000023000

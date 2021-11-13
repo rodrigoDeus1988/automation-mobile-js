@@ -1,0 +1,83 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+variables:
+  - group: automation-mobile-js
+
+trigger: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+schedules:
+  - cron: "0 12,21 * * 0-5"  # GMT
+    displayName: Atualizar relatórios
+    branches:
+      include:
+      - master
+    always: true
+
+stages:
+  - stage: "publish_report"
+    displayName: "publish report"
+    jobs:
+      - job: "publish"
+        steps:        
+        - checkout: self
+          fetchDepth: 1
+
+        - bash: npm i
+          displayName: "Install npm packages"
+
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            buildType: 'specific'
+            project: 'd0c88dd0-5e42-4efb-aa83-4eb32060a8ba'
+            definition: '999'
+            buildVersionToDownload: 'latest'
+            allowPartiallySucceededBuilds: true
+            targetPath: '$(Pipeline.Workspace)/DEVICEFARMSCRIPT/ci_output'
+        
+        - bash: |
+            ANDROID_CI_FILE="$(Pipeline.Workspace)/DEVICEFARMSCRIPT/ci_output/$(cat config/devicefarmandroid.json | node -pe 'JSON.parse(fs.readFileSync(0)).ciFileName')"
+            IOS_CI_FILE="$(Pipeline.Workspace)/DEVICEFARMSCRIPT/ci_output/$(cat ./config/devicefarmios.json | node -pe 'JSON.parse(fs.readFileSync(0)).ciFileName')"
+
+            cd $(Build.Repository.LocalPath)
+
+            node deviceFarmDownloadReport.js $(cat $ANDROID_CI_FILE | node -pe 'JSON.parse(fs.readFileSync(0)).runArn') $(cat $ANDROID_CI_FILE | node -pe 'JSON.parse(fs.readFileSync(0)).downloadArtifactsPath')
+            node deviceFarmDownloadReport.js $(cat $IOS_CI_FILE | node -pe 'JSON.parse(fs.readFileSync(0)).runArn') $(cat $IOS_CI_FILE | node -pe 'JSON.parse(fs.readFileSync(0)).downloadArtifactsPath')
+          displayName: Run download report script
+
+        - bash: |
+            platforms=("android" "ios")
+            for platformdirectory in ${platforms[@]}; do
+              cd $(Build.Repository.LocalPath)/aws_devicefarm_result/$platformdirectory
+
+              for d in *; do
+                  if [ -d "$d" ]; then
+                      REPORT_FOLDER_BUILD_ID=$(Agent.TempDirectory)/reports/$(Resources.Pipeline.DEVICEFARMSCRIPT.RunID)
+                      REPORT_FOLDER=$REPORT_FOLDER_BUILD_ID/$d
+
+                      mkdir -p $REPORT_FOLDER
+                      unzip $d/files/CustomerArtifacts.zip -d $REPORT_FOLDER
+                      shopt -s dotglob
+
+                      mv $REPORT_FOLDER/Host_Machine_Files/'$DEVICEFARM_LOG_DIR'/** $REPORT_FOLDER
+
+                      rm -rf $REPORT_FOLDER/Host_Machine_Files
+                      echo "<li><a href='$d/index.html'>$d</a></li>" >> $REPORT_FOLDER_BUILD_ID/index.html      
+                  fi
+              done
+
+            done
+          displayName: "prepare report"
+
+        - task: PublishPipelineArtifact@1
+          inputs:
+            targetPath: $(Agent.TempDirectory)/reports 
+            artifactName: reports
+
+        - bash: aws s3 cp $(Agent.TempDirectory)/reports "s3://qa-allure-reports-digital-channel/reports" --recursive
+          displayName: "upload reports"
