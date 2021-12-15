@@ -1,0 +1,24 @@
+//CAPABILITY COM EXPRESSO Android
+
+{
+  "deviceName": "Pixel 3 API 29",
+  "app": "/Users/60003350/WorkSpaceMidway/Automacao/automation-mobile-js/app/Android/app-dev-release.apk",
+  "platformName": "Android",
+  "automationName": "Espresso",
+  "espressoBuildConfig": "/Users/60003350/WorkSpaceMidway/Automacao/automation-mobile-js/config/espresso.json",
+  "adbexecTimeout": 60000,
+  "forceEspressoRebuild": false
+}
+
+
+//CAPABILITY COM EXPRESSO iOS
+
+{
+  "platformName": "iOS",
+  "deviceName": "iPhone 11 Pro",
+  "automationName": "XCUITest",
+  "app": "/Users/60003350/WorkSpaceMidway/Projetos/automation-mobile-js/app/iOs/appcenter.ipa",
+  "adbexecTimeout": 60000,
+  "forceEspressoRebuild": true,
+  "espressoBuildConfig": "/Users/60003350/WorkSpaceMidway/Projetos/automation-mobile-js/config/espresso.json"
+}
