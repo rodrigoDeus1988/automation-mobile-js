@@ -1,4 +1,4 @@
-# Automação de Testes e2e do Banco Midway :iphone:
+# Automação de Testes e2e Mobile :iphone:
 
 Essa automação foi construida usando [Appium](http://appium.io/) para testar o aplicativo Banco Midway.
 
